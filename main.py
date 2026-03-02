@@ -1,6 +1,9 @@
 import datetime
 import requests
 from flask import Flask, request, jsonify, make_response
+from copy import deepcopy
+from utils import get_build
+from state import app_state
 
 app = Flask(__name__)
 
@@ -137,6 +140,38 @@ def user_setting():
         }
     }), 200
 
+
+
+
+@app.route("/api/pages/fortnite-game/", methods=["GET"])
+@app.route("/api/pages/fortnite-game", methods=["GET"])
+def fortnite_game():
+    useragent = request.headers.get("User-Agent")
+    build = get_build(useragent)
+    game = deepcopy(app_state.game)
+// credits to old era team.
+    game["dynamicbackgrounds"] = {
+        "jcr:isCheckedOut": True,
+        "backgrounds": {
+            "backgrounds": [
+                {
+                    "backgroundimage": "https://cdn2.unrealengine.com/fortnitemares-wrath-of-the-cube-queen-2048x1024-5a3d045848be.png",
+                    "stage": f"season{build.season}",
+                    "_type": "DynamicBackground",
+                    "key": "lobby"
+                }
+            ],
+            "_type": "DynamicBackgroundList"
+        },
+        "_title": "dynamicbackgrounds",
+        "_noIndex": False,
+        "jcr:baseVersion": "a7ca237317f1e734b3b9d6-8d7b-42cd-bcf1-19decf60552a",
+        "_activeDate": "2018-08-06T19:00:26.217Z",
+        "lastModified": "2018-08-06T19:00:26.217Z",
+        "_locale": "en-US"
+    }
+
+    return jsonify(game), 200
 @app.route('/fortnite/api/game/v2/profile/<account_id>/client/QueryProfile', methods=['POST'])
 def query_profile(account_id):
     profile_id = request.args.get('profileId', 'athena') 
@@ -298,3 +333,4 @@ if __name__ == '__main__':
     print(f"PythonFN running on http://{ip}:{port}")
 
     app.run(host=ip, port=port, debug=False)
+
