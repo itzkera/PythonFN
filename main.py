@@ -226,6 +226,17 @@ def bulk_status():
     
 # micelanous routes
 
+    @app.route('/api/cloudstorage/system', methods=['GET'])
+    def system():
+    cloudstorage = get_cloudstorage()
+    entries = []
+
+    for name, data in cloudstorage.items():
+        entries.append(SystemEntry(name, data).to_dict())
+
+    return jsonify(entries), 200
+    // omfg 
+    
 @app.route('/datarouter/api/v1/public/data', methods=['POST'])
 def data_router():
     return jsonify({"message": "Data received"}), 200
@@ -285,4 +296,5 @@ if __name__ == '__main__':
     # ip should ussually be 0.0.0.0 or 127.0.0.1, i like to do 0.0.0.0
     # port 3551 and 8080 is quite common ports for a fn backend, i just prefer 3551
     print(f"PythonFN running on http://{ip}:{port}")
+
     app.run(host=ip, port=port, debug=False)
